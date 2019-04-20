@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import urllib.request
 import URLs
 import util
+import termcolor
 
 
 def get_all_new_urls():
@@ -94,45 +95,49 @@ def get_book_info_from_url(url):
     soup = util.get_soup(url)
     tmp_soup = soup.find(string='ダウンロード')
 
-    book_title = soup.find('h1', class_='list-pickup-header margin-bottom-0 card-panel white-text blue accent-2').text
-    first_soups = soup.find_all('span', class_='anime-icon')
-    attr_first_soup = first_soups[0]
+    try:
+        book_title = soup.find('h1', class_='list-pickup-header margin-bottom-0 card-panel white-text blue accent-2').text
+        first_soups = soup.find_all('span', class_='anime-icon')
+        attr_first_soup = first_soups[0]
 
-    # ページのレイアウト構成では，原作タイトル，キャラクター，サークル，タグ，更新日，発行日，おすすめ順の順
-    for tmp in first_soups:
-        if '原作' in tmp.text:
-            attr_first_soup = tmp
-            break
+        # ページのレイアウト構成では，原作タイトル，キャラクター，サークル，タグ，更新日，発行日，おすすめ順の順
+        for tmp in first_soups:
+            if '原作' in tmp.text:
+                attr_first_soup = tmp
+                break
 
-    org_titles, a_soups = get_attrs_from_soup(attr_first_soup)
-    characters, a_soups = get_attrs_from_soup(a_soups[-1])
-    circles, a_soups = get_attrs_from_soup(a_soups[-1])
-    tags, a_soups = get_attrs_from_soup(a_soups[-1])
+        org_titles, a_soups = get_attrs_from_soup(attr_first_soup)
+        characters, a_soups = get_attrs_from_soup(a_soups[-1])
+        circles, a_soups = get_attrs_from_soup(a_soups[-1])
+        tags, a_soups = get_attrs_from_soup(a_soups[-1])
 
-    info['title'] = book_title
-    info['org_anime'] = org_titles
-    info['characters'] = characters
-    info['circles'] = circles
-    info['tags'] = tags
+        info['title'] = book_title
+        info['org_anime'] = org_titles
+        info['characters'] = characters
+        info['circles'] = circles
+        info['tags'] = tags
 
-    # サムネイル画像のURLと，おすすめ度を取得
-    view_soup = soup.find('div', class_='bookview-wrap')
-    show_soup = view_soup.find('div', class_='show-relative')
-    img_soup = show_soup.find('img')
-    info['thumb_url'] = img_soup.get('src')
-    star_soup = view_soup.find_all('i', class_='material-icons star')
-    info['recommendation'] = len(star_soup)
+        # サムネイル画像のURLと，おすすめ度を取得
+        view_soup = soup.find('div', class_='bookview-wrap')
+        show_soup = view_soup.find('div', class_='show-relative')
+        img_soup = show_soup.find('img')
+        info['thumb_url'] = img_soup.get('src')
+        star_soup = view_soup.find_all('i', class_='material-icons star')
+        info['recommendation'] = len(star_soup)
 
-    next_url_soup = tmp_soup.find_parent().find_parent()
-    next_url = next_url_soup.get('href')
+        next_url_soup = tmp_soup.find_parent().find_parent()
+        next_url = next_url_soup.get('href')
 
-    soup = util.get_soup(URLs.SMART_MAIN + next_url)
-    button_soup = soup.find(string='PDFダウンロード')
-    pdf_url_soup = button_soup.find_parent().find_parent()
-    pdf_url = pdf_url_soup.get('href')
-    info['url'] = pdf_url
+        soup = util.get_soup(URLs.SMART_MAIN + next_url)
+        button_soup = soup.find(string='PDFダウンロード')
+        pdf_url_soup = button_soup.find_parent().find_parent()
+        pdf_url = pdf_url_soup.get('href')
+        info['url'] = pdf_url
 
-    return info
+        return info
+    except AttributeError as e:
+        e_sentence = termcolor.colored('caused {} in {}'.format(e, info['title']), 'red')
+        print(e_sentence)
 
 
 def download_pdf_from_urls(url, dir):
