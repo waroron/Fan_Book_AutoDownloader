@@ -5,6 +5,9 @@ import util
 import termcolor
 
 
+THUMB_NAME_N = 16
+
+
 def get_all_new_urls():
     """
     同人すまーとの，新着作品ページで紹介されているすべての作品のページのURLを取得し，その文字列を返却する．
@@ -122,6 +125,7 @@ def get_book_info_from_url(url):
         show_soup = view_soup.find('div', class_='show-relative')
         img_soup = show_soup.find('img')
         info['thumb_url'] = img_soup.get('src')
+        info['thumb_name'] = util.random_name(THUMB_NAME_N) + '.jpeg'
         star_soup = view_soup.find_all('i', class_='material-icons star')
         info['recommendation'] = len(star_soup)
 
@@ -173,7 +177,8 @@ def get_book_data_from_secified_query(query, csv_name, dir_name='info', thumb_di
     for url in urls:
         info = get_book_info_from_url(url)
         util.append_book_info_to_csv(csv_path=csv_name, dir=dir_name, info=info)
-        thumb_name = info['title'] + '_thumb.jpg'
+        # thumb_name = info['title'] + '_thumb.jpg'
+        thumb_name = info['thumb_name']
         util.download_file_from_url(info['thumb_url'], thumb_name, thumb_dir)
 
 
@@ -214,7 +219,8 @@ def test_save_info_from_searched_result():
     for url in urls:
         info = get_book_info_from_url(url)
         util.append_book_info_to_csv(csv_path=csv_name, dir=dir_name, info=info)
-        thumb_name = info['title'] + '_thumb.jpg'
+        # thumb_name = info['title'] + '_thumb.jpg'
+        thumb_name = info['thumb_name']
         util.download_file_from_url(info['thumb_url'], thumb_name, thumb_dir)
 
 

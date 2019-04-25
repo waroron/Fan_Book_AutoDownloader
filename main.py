@@ -2,10 +2,11 @@ import util
 import smart
 import KEYWORDs
 
+
 def get_book_data_from_smart(thumb_flag=True):
-    csv_name = 'all_book_info.csv'
-    dir_name = 'info'
-    thumb_dir = 'thumb'
+    csv_name = 'all_book_info2.csv'
+    dir_name = 'info2'
+    thumb_dir = 'thumb2'
 
     for keyword in KEYWORDs.ORG_TITLES:
         q = []
