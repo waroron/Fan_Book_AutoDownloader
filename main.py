@@ -4,8 +4,8 @@ import KEYWORDs
 
 
 def get_book_data_from_smart(anime_title, thumb_flag=True, ):
-    csv_name = 'all_book_info2.csv'
-    dir_name = 'info2'
+    csv_name = 'all_book_info.csv'
+    dir_name = 'info'
     if thumb_flag is False:
         thumb_dir = None
     else:
@@ -27,6 +27,7 @@ def get_book_data_from_smart_all(thumb_flag=True):
     print(titles)
 
     for title in titles:
+        print(title)
         get_book_data_from_smart(title,thumb_flag)
 
 

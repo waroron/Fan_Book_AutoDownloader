@@ -145,7 +145,7 @@ def get_book_info_from_url(url):
 
         return info
     except AttributeError as e:
-        e_sentence = termcolor.colored('caused {} in {}'.format(e, info['title']), 'red')
+        e_sentence = termcolor.colored('caused {}'.format(e), 'red')
         print(e_sentence)
 
 
