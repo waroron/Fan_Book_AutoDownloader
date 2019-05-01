@@ -104,6 +104,11 @@ def get_book_info_from_url(url):
         attr_first_soup = first_soups[0]
 
         # ページのレイアウト構成では，原作タイトル，キャラクター，サークル，タグ，更新日，発行日，おすすめ順の順
+        # (2019/05/01追記)
+        # 実際にクラウドにpdfデータを置いとくのは容量的によろしくないので，pdfへのURL
+        # また，サムネイル画像はサイズは大きくはないが，同人誌リストを表示するたびに，
+        # 複数の本のサムネイル画像へのrequestを要求するため，request回数制限の上限への到達，及びそれに伴う料金発生が
+        # 考えられる．それらを防ぐために，サムネイル画像へのURLも保存する
         for tmp in first_soups:
             if '原作' in tmp.text:
                 attr_first_soup = tmp
@@ -178,8 +183,26 @@ def get_book_data_from_secified_query(query, csv_name, dir_name='info', thumb_di
         info = get_book_info_from_url(url)
         util.append_book_info_to_csv(csv_path=csv_name, dir=dir_name, info=info)
         # thumb_name = info['title'] + '_thumb.jpg'
-        thumb_name = info['thumb_name']
-        util.download_file_from_url(info['thumb_url'], thumb_name, thumb_dir)
+        if thumb_dir is not None:
+            thumb_name = info['thumb_name']
+            util.download_file_from_url(info['thumb_url'], thumb_name, thumb_dir)
+
+
+def get_all_anime_titles():
+    titles =[]
+    q = []
+    q.append(('from', 'sidebar_icon'))
+    searched_url = util.add_query(URLs.SMART_MAIN + URLs.SMART_PRODUCT, q)
+    soup = util.get_soup(searched_url)
+
+    row = soup.find('ul', class_='row')
+    lists = row.find_all('li', class_='category-list card-panel col s12 m12 l6')
+
+    for list_ in lists:
+        title = list_.find('span', class_='title').get_text()
+        titles.append(title)
+
+    return titles
 
 
 def _test():

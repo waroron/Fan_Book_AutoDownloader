@@ -88,13 +88,14 @@ def append_book_info_to_csv(csv_path, info, dir):
         print('make {} dir'.format(dir))
         os.mkdir(dir)
     csv_path = os.path.join(dir, csv_path)
-    columns = ['title', 'tags', 'circles', 'characters', 'org_anime', 'recommendation', 'URL', 'thumb_name']
+    columns = ['title', 'tags', 'circles', 'characters', 'org_anime', 'recommendation',
+               'URL', 'thumb_name', 'thumb_url']
     tags_for_csv = ",".join(map(str, info['tags']))
     circles_for_csv = ",".join(map(str, info['circles']))
     characters_for_csv = ",".join(map(str, info['characters']))
     org_anime_for_csv = ",".join(map(str, info['org_anime']))
     append_col = [info['title'], tags_for_csv, circles_for_csv, characters_for_csv, org_anime_for_csv,
-                  info['recommendation'], info['url'], info['thumb_name']]
+                  info['recommendation'], info['url'], info['thumb_name'], info['thumb_url']]
     df = pd.DataFrame([append_col], columns=columns)
 
     try:
