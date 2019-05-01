@@ -87,6 +87,20 @@ def get_attrs_from_soup(soup):
     return attrs, a_soups
 
 
+def _get_book_data_from_its_page(keyword, soup):
+    detail_box_soup = soup.find('span', class_=keyword)
+    if detail_box_soup is None:
+        return [""]
+    target_soup = detail_box_soup.find_next()
+
+    attrs = []
+    a_soups = target_soup.find_all('a')
+    for a in a_soups:
+        attrs.append(a.text.strip())
+
+    return attrs
+
+
 def get_book_info_from_url(url):
     """
     作品ページのURLから，作品タイトル，作品公開日，原作名などの作品情報と，作品のpdfが公開されているURLを取得し，
@@ -109,15 +123,12 @@ def get_book_info_from_url(url):
         # また，サムネイル画像はサイズは大きくはないが，同人誌リストを表示するたびに，
         # 複数の本のサムネイル画像へのrequestを要求するため，request回数制限の上限への到達，及びそれに伴う料金発生が
         # 考えられる．それらを防ぐために，サムネイル画像へのURLも保存する
-        for tmp in first_soups:
-            if '原作' in tmp.text:
-                attr_first_soup = tmp
-                break
-
-        org_titles, a_soups = get_attrs_from_soup(attr_first_soup)
-        characters, a_soups = get_attrs_from_soup(a_soups[-1])
-        circles, a_soups = get_attrs_from_soup(a_soups[-1])
-        tags, a_soups = get_attrs_from_soup(a_soups[-1])
+        # 「原作」のところから下に順番に，キャラクター名，サークル名，タグとなっていることが前提
+        # -->
+        org_titles = _get_book_data_from_its_page('anime-icon', soup)
+        characters = _get_book_data_from_its_page('character-icon', soup)
+        circles = _get_book_data_from_its_page('circle-icon', soup)
+        tags = _get_book_data_from_its_page('tag-icon', soup)
 
         info['title'] = book_title
         info['org_anime'] = org_titles
@@ -180,12 +191,16 @@ def get_book_data_from_secified_query(query, csv_name, dir_name='info', thumb_di
     searched_url = util.add_query(URLs.SMART_MAIN + URLs.SMART_LIST, query)
     urls = get_urls_from_all_searching_page(searched_url)
     for url in urls:
-        info = get_book_info_from_url(url)
-        util.append_book_info_to_csv(csv_path=csv_name, dir=dir_name, info=info)
-        # thumb_name = info['title'] + '_thumb.jpg'
-        if thumb_dir is not None:
-            thumb_name = info['thumb_name']
-            util.download_file_from_url(info['thumb_url'], thumb_name, thumb_dir)
+        try:
+            info = get_book_info_from_url(url)
+            util.append_book_info_to_csv(csv_path=csv_name, dir=dir_name, info=info)
+            if thumb_dir is not None:
+                thumb_name = info['thumb_name']
+                util.download_file_from_url(info['thumb_url'], thumb_name, thumb_dir)
+        except:
+            import traceback
+            traceback.print_exc()
+            continue
 
 
 def get_all_anime_titles():
@@ -225,6 +240,7 @@ def test_search_and_get_urls():
     urls = get_urls_from_all_searching_page(searched_url)
     print('searching {}s results  are follows'.format(len(urls)))
     for url in urls:
+        get_book_info_from_url(url)
         print(url)
 
 
@@ -248,5 +264,5 @@ def test_save_info_from_searched_result():
 
 
 if __name__ == '__main__':
-    # test_search_and_get_urls()
-    test_save_info_from_searched_result()
+    test_search_and_get_urls()
+    # test_save_info_from_searched_result()

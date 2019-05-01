@@ -76,6 +76,20 @@ def is_str_in(str_list, text):
     return False
 
 
+def get_csv(csv_dir='info', csv_name='all_book_info.csv'):
+    csv_path = os.path.join(csv_dir, csv_name)
+    existed_csv = pd.read_csv(csv_path, encoding='utf_8_sig').iloc[:, 1:]
+    return existed_csv
+
+
+def split_words(words):
+    try:
+        return words.split(',')
+    except AttributeError:
+        # タグがNanとなっている
+        return ['Nan']
+
+
 def append_book_info_to_csv(csv_path, info, dir):
     # タイトル -> title
     # タグ -> tags
