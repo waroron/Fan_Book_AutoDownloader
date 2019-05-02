@@ -1,12 +1,11 @@
 import util
 import smart
 import KEYWORDs
-import re
 import pandas as pd
 import os
 
 
-def get_book_data_from_smart(anime_title, thumb_flag=True, ):
+def get_book_data_from_smart(anime_title, thumb_flag=True):
     csv_name = 'all_book_info.csv'
     dir_name = 'info'
     if thumb_flag is False:
@@ -31,27 +30,19 @@ def get_book_data_from_smart_all(thumb_flag=True):
 
     for title in titles:
         print(title)
-        get_book_data_from_smart(title,thumb_flag)
+        get_book_data_from_smart(title, thumb_flag)
 
 
-def get_all_tags(tags_csv, csv_dir='info', csv_name='all_book_info.csv'):
+def get_all_elements(elem, tags_csv, csv_dir='info', csv_name='all_book_info.csv'):
     csv = util.get_csv(csv_dir, csv_name)
-    tags = csv['tags']
-    add = []        # 共通集合
-    subtract = []   # 共通集合の補集合
+    tags = csv[elem]
     result = []
 
     save_path = os.path.join(csv_dir, tags_csv)
-
-    for num in range(len(tags)):
-        tmp = util.split_words(tags[num])
-
-        tmp = [s for s in tmp if not re.match('....-..-..', s)]
-
-        add = list(set(result) & set(tmp))
-        subtract = list(set(result) ^ set(tmp))
-        result = add.copy()
-        result.extend(subtract)
+    for num, tag in enumerate(tags):
+        tmp = util.split_words(tag)
+        result.extend(tmp)
+    result = list(set(result))
 
     result = pd.DataFrame(result)
     result.to_csv(save_path, encoding='utf_8_sig')
@@ -59,7 +50,10 @@ def get_all_tags(tags_csv, csv_dir='info', csv_name='all_book_info.csv'):
 
 
 if __name__ == '__main__':
-    # get_all_tags('all_tags.csv')
-    get_book_data_from_smart_via_KEYWORDs(thumb_flag=False)
+    get_all_elements('tags', 'tags_list.csv')
+    get_all_elements('characters', 'characters_list.csv')
+    get_all_elements('circles', 'circles_list.csv')
+    get_all_elements('org_anime', 'org_anime_list.csv')
+    # get_book_data_from_smart_via_KEYWORDs(thumb_flag=False)
     # get_book_data_from_smart_all(thumb_flag=False)
     # get_book_data_from_smart(thumb_flag=True)
