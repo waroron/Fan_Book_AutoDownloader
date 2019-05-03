@@ -124,17 +124,20 @@ def get_book_info_from_url(url):
         # 複数の本のサムネイル画像へのrequestを要求するため，request回数制限の上限への到達，及びそれに伴う料金発生が
         # 考えられる．それらを防ぐために，サムネイル画像へのURLも保存する
         # 「原作」のところから下に順番に，キャラクター名，サークル名，タグとなっていることが前提
-        # -->
+        # --> 情報の名前から位置を推定し抽出する
+        # 2019/05/03 「更新日」追加
         org_titles = _get_book_data_from_its_page('anime-icon', soup)
         characters = _get_book_data_from_its_page('character-icon', soup)
         circles = _get_book_data_from_its_page('circle-icon', soup)
         tags = _get_book_data_from_its_page('tag-icon', soup)
+        update_date = _get_book_data_from_its_page('upload-day-icon', soup)
 
         info['title'] = book_title
         info['org_anime'] = org_titles
         info['characters'] = characters
         info['circles'] = circles
         info['tags'] = tags
+        info['update_day'] = update_date[0]
 
         # サムネイル画像のURLと，おすすめ度を取得
         view_soup = soup.find('div', class_='bookview-wrap')

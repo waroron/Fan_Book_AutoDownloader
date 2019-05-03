@@ -50,10 +50,10 @@ def get_all_elements(elem, tags_csv, csv_dir='info', csv_name='all_book_info.csv
 
 
 if __name__ == '__main__':
-    get_all_elements('tags', 'tags_list.csv')
-    get_all_elements('characters', 'characters_list.csv')
-    get_all_elements('circles', 'circles_list.csv')
-    get_all_elements('org_anime', 'org_anime_list.csv')
+    # get_all_elements('tags', 'tags_list.csv')
+    # get_all_elements('characters', 'characters_list.csv')
+    # get_all_elements('circles', 'circles_list.csv')
+    # get_all_elements('org_anime', 'org_anime_list.csv')
     # get_book_data_from_smart_via_KEYWORDs(thumb_flag=False)
-    # get_book_data_from_smart_all(thumb_flag=False)
+    get_book_data_from_smart_all(thumb_flag=False)
     # get_book_data_from_smart(thumb_flag=True)
