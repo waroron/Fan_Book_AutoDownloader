@@ -49,11 +49,19 @@ def get_all_elements(elem, tags_csv, csv_dir='info', csv_name='all_book_info.csv
     print('saved to {}'.format(save_path))
 
 
+def download_all_thumb(dir='thumb/'):
+    csv = util.get_csv()
+
+    for name, url in zip(csv['thumb_name'], csv['thumb_url']):
+        util.download_file_from_url(url, name, dir)
+
+
 if __name__ == '__main__':
+    download_all_thumb()
     # get_all_elements('tags', 'tags_list.csv')
     # get_all_elements('characters', 'characters_list.csv')
     # get_all_elements('circles', 'circles_list.csv')
     # get_all_elements('org_anime', 'org_anime_list.csv')
     # get_book_data_from_smart_via_KEYWORDs(thumb_flag=False)
-    get_book_data_from_smart_all(thumb_flag=False)
+    # get_book_data_from_smart_all(thumb_flag=False)
     # get_book_data_from_smart(thumb_flag=True)
