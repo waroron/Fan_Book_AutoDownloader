@@ -50,6 +50,9 @@ def get_all_elements(elem, tags_csv, csv_dir='info', csv_name='all_book_info.csv
 
 
 def download_all_thumb(dir='thumb/'):
+    if not os.path.isdir(dir):
+        os.mkdir(dir)
+        print('make dir {}'.format(dir))
     csv = util.get_csv()
 
     for name, url in zip(csv['thumb_name'], csv['thumb_url']):
