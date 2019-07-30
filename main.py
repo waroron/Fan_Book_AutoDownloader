@@ -16,7 +16,7 @@ def get_book_data_from_smart(anime_title, thumb_flag=True):
     q = []
     q.append(('type', '1'))
     q.append(('keyword', anime_title))
-    smart.get_book_data_from_secified_query(query=q, csv_name=csv_name, dir_name=dir_name, thumb_dir=thumb_dir)
+    smart.get_book_data_from_secified_query(query=q, csv_name=csv_name, dir_name=dir_name, thumb_dir=thumb_dir, rej_th=5)
 
 
 def get_book_data_from_smart_via_KEYWORDs(thumb_flag=True):
@@ -60,11 +60,11 @@ def download_all_thumb(dir='thumb/'):
 
 
 if __name__ == '__main__':
-    download_all_thumb()
+    # download_all_thumb()
     # get_all_elements('tags', 'tags_list.csv')
     # get_all_elements('characters', 'characters_list.csv')
     # get_all_elements('circles', 'circles_list.csv')
     # get_all_elements('org_anime', 'org_anime_list.csv')
     # get_book_data_from_smart_via_KEYWORDs(thumb_flag=False)
-    # get_book_data_from_smart_all(thumb_flag=False)
+    get_book_data_from_smart_all(thumb_flag=False)
     # get_book_data_from_smart(thumb_flag=True)

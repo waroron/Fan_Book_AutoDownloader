@@ -190,16 +190,25 @@ def download_all_new_books(csv_path, dir):
         util.append_book_info_to_csv(csv_path, book_info)
 
 
-def get_book_data_from_secified_query(query, csv_name, dir_name='info', thumb_dir='thumb'):
+def get_book_data_from_secified_query(query, csv_name, dir_name='info', thumb_dir='thumb', rej_th=10):
     searched_url = util.add_query(URLs.SMART_MAIN + URLs.SMART_LIST, query)
     urls = get_urls_from_all_searching_page(searched_url)
+    rej_count = 0
     for url in urls:
         try:
             info = get_book_info_from_url(url)
-            util.append_book_info_to_csv(csv_path=csv_name, dir=dir_name, info=info)
+            flag = util.append_book_info_to_csv(csv_path=csv_name, dir=dir_name, info=info)
             if thumb_dir is not None:
                 thumb_name = info['thumb_name']
                 util.download_file_from_url(info['thumb_url'], thumb_name, thumb_dir)
+            if not flag:
+                rej_count += 1
+
+            if rej_count >= rej_th:
+                text = termcolor.colored("Skip this searching because of over rej_th. Current query: {}".format(query), "red")
+                print(text)
+                return False
+
         except:
             import traceback
             traceback.print_exc()
